@@ -38,7 +38,7 @@ const NewPostInput = (props) => {
         value="Submit"
         onClick={handleSubmit}
       >
-        Submit
+        提交
       </button>
     </div>
   );

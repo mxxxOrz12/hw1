@@ -4,14 +4,20 @@ validator.checkSetup();
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
+const cors = require("cors");
 
 const api = require("./api.js");
+const auth = require("./auth.js");
 
 const mongoConnectionURL =
   "mongodb+srv://402674230ma:maxiao666%40@cluster0.ob7ex29.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
-const databaseName = "Blog";
-const options = { useNewUrlParser: true, useUnifiedTopology: true, dbName: databaseName };
+const databaseName = "Chat";
+const options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  dbName: databaseName,
+};
 
 mongoose
   .connect(mongoConnectionURL, options)
@@ -22,8 +28,10 @@ const app = express();
 app.use(validator.checkRoutes);
 
 app.use(express.json());
+app.use(cors());
 
 app.use("/api", api);
+app.use("auth", auth);
 
 const reactPath = path.resolve(__dirname, "..", "client", "dist");
 app.use(express.static(reactPath));

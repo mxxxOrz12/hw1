@@ -1,5 +1,7 @@
 .Feed-comment {
   margin-top: 250px;
+  border: 2px solid #b6c1ff;
+  padding: 10px;
   background-color: rgb(255, 255, 255);
 }
 .Feed-comment-title {

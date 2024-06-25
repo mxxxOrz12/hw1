@@ -3,3 +3,8 @@
   padding: var(--m) var(--m);
   margin: auto;
 }
+html,
+body,
+#root {
+  height: 100%;
+}
