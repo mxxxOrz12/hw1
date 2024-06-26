@@ -19,11 +19,15 @@ router.get("/stories", (req, res) => {
 });
 
 router.post("/story", (req, res) => {
-  const newStory = new Story({
-    creator_name: myName,
-    content: req.body.content,
-  });
-  newStory.save().then((story) => res.send(story));
+  if (req.session.username) {
+    const newStory = new Story({
+      creator_name: req.session.username,
+      content: req.body.content,
+    });
+    newStory.save().then((story) => res.send(story));
+  } else {
+    res.status(401).json("未登录");
+  }
 });
 
 router.get("/comment", (req, res) => {
@@ -36,7 +40,7 @@ router.get("/comment", (req, res) => {
 
 router.post("/comment", (req, res) => {
   const newComment = new Comment({
-    creator_name: myName,
+    creator_name: req.session.username,
     content: req.body.content,
     parent: req.body.parent,
   });

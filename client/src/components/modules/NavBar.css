@@ -34,3 +34,10 @@
 .NavBar-link + .NavBar-link {
   margin-left: var(--m);
 }
+.Navbar-logout {
+  border: 0;
+  color: var(--white);
+  opacity: 0.6;
+  text-decoration: none;
+  padding: 10px;
+}

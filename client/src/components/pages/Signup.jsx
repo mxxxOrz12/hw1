@@ -5,7 +5,7 @@ import "./Signup.css";
 import { Card } from "antd";
 import signup from "../assets/signup.png";
 import axios from "axios";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const initialState = {
   username: "",
@@ -66,28 +66,47 @@ const Signup = () => {
     const { username, password } = form;
 
     const URL = "http://localhost:3000";
-
     axios
-      .post(`${URL}/auth/${isSignup ? "signup" : "login"}`, {
-        username,
-        password,
-      })
+      .post(
+        `${URL}/auth/${isSignup ? "signup" : "login"}`,
+        {
+          username,
+          password,
+        },
+        { withCredentials: true }
+      ) // 启用 withCredentials 以携带 cookie
       .then((result) => {
-        setSuccessMessage(`${isSignup ? "注册成功" : "登录成功"}`);
-        myForm.resetFields();
-        setIsSignup((prevIsSignup) => !prevIsSignup);
-
-        if (result.data == "Success") {
-          navigate("/");
+        if (!isSignup) {
+          if (result.data == "Success") {
+            setSuccessMessage("登录成功");
+            myForm.resetFields();
+            setTimeout(() => {
+              navigate("/profile");
+            }, 2000);
+          }
+        } else {
+          setSuccessMessage("注册成功");
+          setIsSignup((prevIsSignup) => !prevIsSignup);
         }
+      })
+      .catch((error) => {
+        if (error.response) {
+          if (error.response.status === 400) {
+            setErrorMessage("密码错误");
+          } else if (error.response.status === 404) {
+            setErrorMessage("找不到该用户");
+          } else {
+            setErrorMessage("服务器错误，请稍后再试");
+          }
+        } else {
+          setErrorMessage("网络错误，请检查你的网络连接");
+        }
+        myForm.resetFields();
       });
-    console.log(form);
   };
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-
-    console.log(form);
   };
 
   return (

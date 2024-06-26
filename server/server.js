@@ -5,6 +5,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const cors = require("cors");
+const session = require("express-session");
 
 const api = require("./api.js");
 const auth = require("./auth.js");
@@ -27,11 +28,29 @@ mongoose
 const app = express();
 app.use(validator.checkRoutes);
 
+const corsOptions = {
+  origin: "http://localhost:5050",
+  credentials: true, // 允许携带cookie
+};
+
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
+
+app.use(
+  session({
+    name: "sid", // 设置cookie的name，默认为 connect.sid
+    secret: "zhangsan", // 加密的字符串
+    saveUninitialized: false, // 是否每次请求都设置一个cookie用来存储session的id
+    resave: false, // 是否在每次请求的时候重新保存session
+    cookie: {
+      httpOnly: true, // 开启后 前端无法通过js操作，可以有效解决xxs攻击（跨站脚本攻击）
+      maxAge: 100000 * 10, // 控制session的过期时间，单位为毫秒
+    },
+  })
+);
 
 app.use("/api", api);
-app.use("auth", auth);
+app.use("/auth", auth);
 
 const reactPath = path.resolve(__dirname, "..", "client", "dist");
 app.use(express.static(reactPath));

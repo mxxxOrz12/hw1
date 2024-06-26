@@ -11,18 +11,29 @@ router.post("/signup", (req, res) => {
     .catch((err) => res.json(err));
 });
 
-router.post("/login", (req, res) => {
+router.post("/login", async (req, res) => {
   const { username, password } = req.body;
-  User.findOne({ username: username }).then((user) => {
+  try {
+    const user = await User.findOne({ username: username });
     if (user) {
       if (user.password === password) {
-        res.json("Success");
+        req.session.username = req.body.username;
+        console.log("Session:", req.session);
+        res.status(200).json("Success");
       } else {
-        res.json("密码错误");
+        res.status(400).json("密码错误");
       }
     } else {
-      res.json("找不到该用户");
+      res.status(404).json("找不到该用户");
     }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/logout", (req, res) => {
+  req.session.destroy(() => {
+    res.send("退出成功");
   });
 });
 
